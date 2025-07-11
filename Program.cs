@@ -1,66 +1,39 @@
-﻿using Microsoft.VisualBasic;
+﻿using System.Diagnostics;
+using Microsoft.VisualBasic;
 
 namespace CSharp_Linq
 {
     class Program
     {
-        // Lista de valores do tipo objeto Despesa
-        private static List<Despesa> despesas = new List<Despesa>
+        private static List<Produto> produtos = new List<Produto>
         {
-            // Criando uma lista de objetos em memória
-            new Despesa { Descricao = "Internet", Valor = 100, Vencimento = new DateTime(2021, 10, 1) },
-            new Despesa { Descricao = "Celular", Valor = 80, Vencimento = new DateTime(2021, 10, 20) },
-            new Despesa { Descricao = "Aluguel", Valor = 1200, Vencimento = new DateTime(2021, 10, 18) },
-            new Despesa { Descricao = "Contabilidade", Valor = 400, Vencimento = new DateTime(2021, 10, 20) },
+            new Produto { Nome = "Notebook", Preco = 8000, Categoria = "Informática"},
+            new Produto { Nome = "Monitor", Preco = 1000, Categoria = "Informática"},
+            new Produto { Nome = "Cama", Preco = 2000, Categoria = "Móveis"},
+            new Produto { Nome = "Armário", Preco = 3000, Categoria = "Móveis"}
+        };
 
+        private static List<Promocao> promocoes = new List<Promocao>
+        {
+            new Promocao {Categoria = "Informática", Desconto = 10},
+            new Promocao {Categoria = "Moveis", Desconto = 20}
         };
 
         static void Main(string[] args)
         {
-            var despesasVencidas = from d in despesas
-                                   select d;
+            // Join entre tabelas
+            var resultado = from produto in produtos
+                            join promocao in promocoes on produto.Categoria equals promocao.Categoria
+                            select new
+                            {
+                                produto.Nome,
+                                produto.Categoria,
+                                precoComDesconto = produto.Preco * (1 - (promocao.Desconto / 100))
+                            };
 
-            imprimir(despesasVencidas);
-
-            Console.WriteLine("-----------------------");
-
-            // Aplicando filtros 
-            var despesasVencidasFiltrada = from d in despesas
-                                           where d.Valor < 500
-                                           select d;
-
-            imprimir(despesasVencidasFiltrada);
-
-            Console.WriteLine("-----------------------");
-            var despesasVencidasData = from d in despesas
-                                       where d.Valor < 500 && d.Vencimento <= new DateTime(2021, 10, 10)
-                                       select d;
-
-            imprimir(despesasVencidasData);
-
-            Console.WriteLine("-----------------------");
-            // Ordenando resultado da consulta
-            var despesasOrdenadas = from d in despesas
-                                    where d.Valor < 500
-                                    orderby d.Valor
-                                    select d;
-
-            imprimir(despesasOrdenadas);
-
-            Console.WriteLine("-----------------------");
-            var despesasOrdenadasData = from d in despesas
-                                        where d.Valor < 500
-                                        orderby d.Vencimento descending, d.Valor ascending
-                                        select d;
-
-            imprimir(despesasOrdenadasData);
-        }
-
-        public static void imprimir(IEnumerable<Despesa> listaDespesas)
-        {
-            foreach (var d in listaDespesas)
+            foreach (var p in resultado)
             {
-                Console.WriteLine(d);
+                Console.WriteLine($"{p.Nome} - {p.Categoria} - {p.precoComDesconto}");
             }
         }
     }
