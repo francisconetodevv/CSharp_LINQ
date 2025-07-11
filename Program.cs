@@ -5,35 +5,36 @@ namespace CSharp_Linq
 {
     class Program
     {
-        private static List<Produto> produtos = new List<Produto>
-        {
-            new Produto { Nome = "Notebook", Preco = 8000, Categoria = "Informática"},
-            new Produto { Nome = "Monitor", Preco = 1000, Categoria = "Informática"},
-            new Produto { Nome = "Cama", Preco = 2000, Categoria = "Móveis"},
-            new Produto { Nome = "Armário", Preco = 3000, Categoria = "Móveis"}
-        };
+        private static List<Despesa> despesas = new List<Despesa>
+       {
+           // Criando uma lista de objetos em memória
+           new Despesa { Descricao = "Internet", Valor = 100, Vencimento = new DateTime(2021, 10, 1) },
+           new Despesa { Descricao = "Celular", Valor = 80, Vencimento = new DateTime(2021, 10, 20) },
+           new Despesa { Descricao = "Aluguel", Valor = 1200, Vencimento = new DateTime(2021, 10, 18) },
+           new Despesa { Descricao = "Contabilidade", Valor = 400, Vencimento = new DateTime(2021, 10, 20) },
+       };
 
-        private static List<Promocao> promocoes = new List<Promocao>
-        {
-            new Promocao {Categoria = "Informática", Desconto = 10},
-            new Promocao {Categoria = "Moveis", Desconto = 20}
-        };
 
         static void Main(string[] args)
         {
-            // Join entre tabelas
-            var resultado = from produto in produtos
-                            join promocao in promocoes on produto.Categoria equals promocao.Categoria
-                            select new
-                            {
-                                produto.Nome,
-                                produto.Categoria,
-                                precoComDesconto = produto.Preco * (1 - (promocao.Desconto / 100))
-                            };
+            var resultado = from d in despesas
+                            select d.Descricao;
 
-            foreach (var p in resultado)
+            var resultadoDois = from d in despesas
+                                select new
+                                {
+                                    d.Descricao,
+                                    ValorComDesconto = d.Valor * 0.9m 
+                                };
+
+            foreach (var r in resultado)
             {
-                Console.WriteLine($"{p.Nome} - {p.Categoria} - {p.precoComDesconto}");
+                Console.WriteLine(r);
+            }
+
+            foreach (var r in resultadoDois)
+            {
+                Console.WriteLine(r);
             }
         }
     }
